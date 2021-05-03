@@ -3,16 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		775A0C23263F7A2C00D05151 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775A0C22263F7A2C00D05151 /* AppDelegate.swift */; };
 		775A0C25263F7A2C00D05151 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775A0C24263F7A2C00D05151 /* SceneDelegate.swift */; };
 		775A0C27263F7A2C00D05151 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775A0C26263F7A2C00D05151 /* ViewController.swift */; };
-		775A0C2A263F7A2C00D05151 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 775A0C28263F7A2C00D05151 /* Main.storyboard */; };
 		775A0C2C263F7A2F00D05151 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 775A0C2B263F7A2F00D05151 /* Assets.xcassets */; };
 		775A0C2F263F7A2F00D05151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 775A0C2D263F7A2F00D05151 /* LaunchScreen.storyboard */; };
+		775A0C3C263F7DAB00D05151 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 775A0C3B263F7DAB00D05151 /* SnapKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,7 +20,6 @@
 		775A0C22263F7A2C00D05151 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		775A0C24263F7A2C00D05151 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		775A0C26263F7A2C00D05151 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		775A0C29263F7A2C00D05151 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		775A0C2B263F7A2F00D05151 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		775A0C2E263F7A2F00D05151 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		775A0C30263F7A2F00D05151 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -31,6 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				775A0C3C263F7DAB00D05151 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +59,6 @@
 				775A0C22263F7A2C00D05151 /* AppDelegate.swift */,
 				775A0C24263F7A2C00D05151 /* SceneDelegate.swift */,
 				775A0C26263F7A2C00D05151 /* ViewController.swift */,
-				775A0C28263F7A2C00D05151 /* Main.storyboard */,
 				775A0C2B263F7A2F00D05151 /* Assets.xcassets */,
 				775A0C2D263F7A2F00D05151 /* LaunchScreen.storyboard */,
 				775A0C30263F7A2F00D05151 /* Info.plist */,
@@ -83,6 +82,9 @@
 			dependencies = (
 			);
 			name = WeatherMap;
+			packageProductDependencies = (
+				775A0C3B263F7DAB00D05151 /* SnapKit */,
+			);
 			productName = WeatherMap;
 			productReference = 775A0C1F263F7A2C00D05151 /* WeatherMap.app */;
 			productType = "com.apple.product-type.application";
@@ -110,6 +112,9 @@
 				Base,
 			);
 			mainGroup = 775A0C16263F7A2C00D05151;
+			packageReferences = (
+				775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */,
+			);
 			productRefGroup = 775A0C20263F7A2C00D05151 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -126,7 +131,6 @@
 			files = (
 				775A0C2F263F7A2F00D05151 /* LaunchScreen.storyboard in Resources */,
 				775A0C2C263F7A2F00D05151 /* Assets.xcassets in Resources */,
-				775A0C2A263F7A2C00D05151 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,14 +150,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		775A0C28263F7A2C00D05151 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				775A0C29263F7A2C00D05151 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		775A0C2D263F7A2F00D05151 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -296,7 +292,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = romagornostay.WeatherMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -315,7 +311,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = romagornostay.WeatherMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -341,6 +337,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		775A0C3B263F7DAB00D05151 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 775A0C17263F7A2C00D05151 /* Project object */;
 }
