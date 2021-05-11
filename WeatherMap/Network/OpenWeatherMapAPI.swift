@@ -9,7 +9,7 @@ import Foundation
 
 class OpenWeatherMapAPI {
 
-    private let apiKey = "Tap_Here_APIKey"//"f29c200a139afafc68712a696174b3e1"
+    private let apiKey = "Tap_Here_APIKey"
     private let decoder = JSONDecoder()
     private let session: URLSession
 
