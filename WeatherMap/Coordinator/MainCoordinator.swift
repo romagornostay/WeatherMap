@@ -13,19 +13,15 @@ class MainCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
-        self.navigationController = navigationController
+    init() {
+        self.navigationController = UINavigationController()
     }
     
     func start() {
-        let vc = MapViewController()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: false)
+        let coordinator = MapCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
-    func showDeatailWeather() {
-        let vc = WeatherViewController()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
-    }
+    
     
 }
