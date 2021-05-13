@@ -19,10 +19,10 @@ final class WeatherViewModel {
             
     private let cityName = "London" // Milan City
     
-    private var city: String?
+    private let place: String
     
-    init(city: String?) {
-      self.city = city
+    init(place: String) {
+      self.place = place
     }
     
     //init(){ getData() }

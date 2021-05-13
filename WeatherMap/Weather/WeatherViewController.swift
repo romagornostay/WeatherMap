@@ -10,9 +10,18 @@ import SnapKit
 
 
 final class WeatherViewController: UIViewController {
-    //weak var coordinator: MainCoordinator?
+    weak var coordinator: MainCoordinator?
     
-  lazy var viewModel = WeatherViewModel(city: place)
+    private var viewModel: WeatherViewModel
+    
+    init(viewModel: WeatherViewModel){
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var place: String?
     

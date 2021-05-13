@@ -11,7 +11,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
     
-    var coordinator = MainCoordinator()
+    var coordinator: MainCoordinator?
 
 
 
@@ -21,13 +21,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         
+        let navigationController = UINavigationController()
+        coordinator = MainCoordinator(navigationController: navigationController)
+        coordinator?.start()
         
         let window = UIWindow(windowScene: scene)
-        window.rootViewController = coordinator.navigationController
+        window .rootViewController = navigationController
         window.makeKeyAndVisible()
         self.window = window
         
-        coordinator.start()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
