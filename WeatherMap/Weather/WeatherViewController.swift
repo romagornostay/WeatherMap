@@ -23,9 +23,6 @@ final class WeatherViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    var place: String?
-    
-    
     let contentView: UIView = {
         let view = UIView()
         return view
@@ -89,25 +86,23 @@ final class WeatherViewController: UIViewController {
     
     let frameView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray5
+        //view.backgroundColor = .systemBackground
         return view
     }()
     
-    let imageView: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "mist")
-        view.contentMode = .scaleAspectFit
-        let mask = CALayer()
-        mask.contents = UIImage(named: "mask")?.cgImage
-        mask.frame = CGRect(x: 0, y: 0, width: 240, height: 580)
-        view.layer.mask = mask
-        view.layer.masksToBounds = true
-        return view
+    let descriptionTitleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .base4
+        label.font = .base6
+        label.numberOfLines = 1
+        return label
     }()
+    
+    private  let imageView = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .systemBackground
         viewModel.getData()
         setup()
         setupViews()
@@ -116,6 +111,7 @@ final class WeatherViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         setupData()
         setupLayout()
     }
@@ -126,19 +122,31 @@ final class WeatherViewController: UIViewController {
     }
     
     func setupData() {
-        title = viewModel.currentWeather.name
-        temperatureLabel.text = "\(viewModel.currentWeather.mainValue.temp) ˚"
+        let cw = viewModel.sendData()
+        let description = cw.elements.first?.description
+        title = cw.name
+        
+        temperatureLabel.text = "\(Int(cw.mainValue.temp - 273.15))˚"
+        descriptionTitleLabel.text = description?.capitalized
         humidityTitleLabel.text = "humidity".uppercased()
-        humidityLabel.text = "\(viewModel.currentWeather.mainValue.humidity) %"
+        humidityLabel.text = "\(cw.mainValue.humidity) %"
         windTitleLabel.text = "wind".uppercased()
-        windLabel.text = "\(viewModel.currentWeather.wind.speed) m/s"
+        windLabel.text = "\(Wind.getDeg(deg:cw.wind.deg)) \(cw.wind.speed) m/s"
         pressureTitleLabel.text = "pressure".uppercased()
-        pressureLabel.text = "\(viewModel.currentWeather.mainValue.pressure) mm Hg"
+        pressureLabel.text = "\(cw.mainValue.pressure) mm Hg"
+        
+        if let image = UIImage(named: description!) {
+          imageView.image = image
+        } else {
+          imageView.image = UIImage(named: "scattered clouds")
+        }
+        //imageView.image = UIImage(named: description!)
     }
     
     func setupLayout() {
         view.addSubview(contentView)
         contentView.addSubview(temperatureLabel)
+        contentView.addSubview(descriptionTitleLabel)
         contentView.addSubview(humidityTitleLabel)
         contentView.addSubview(humidityLabel)
         contentView.addSubview(windTitleLabel)
@@ -156,8 +164,13 @@ final class WeatherViewController: UIViewController {
             make.leading.equalTo(contentView).inset(16)
         }
         
-        humidityTitleLabel.snp.makeConstraints { make in
+        descriptionTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(temperatureLabel.snp.bottom).offset(10)
+            make.leading.equalTo(contentView).inset(16)
+        }
+        
+        humidityTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(descriptionTitleLabel.snp.bottom).offset(10)
             make.leading.equalTo(contentView).inset(16)
         }
         
@@ -192,6 +205,12 @@ final class WeatherViewController: UIViewController {
         
         view.addSubview(frameView)
         frameView.addSubview(imageView)
+        imageView.contentMode = .scaleAspectFit
+        let mask = CALayer()
+        mask.contents = UIImage(named: "mask")?.cgImage
+        mask.frame = CGRect(x: 0, y: 0, width: 240, height: 580)
+        imageView.layer.mask = mask
+        imageView.layer.masksToBounds = true
         
         frameView.snp.makeConstraints { (make) in
             make.width.height.equalTo(761)

@@ -36,7 +36,7 @@ struct CurrentWeather: Codable {
             id: 0,
             name: "",
             coordinate: Coordinate.emptyInit(),
-            elements: [],
+            elements: [WeatherElement.emptyInit()],
             base: "",
             mainValue: MainValue.emptyInit(),
             visibility: 0,

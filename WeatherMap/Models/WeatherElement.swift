@@ -9,9 +9,9 @@ import Foundation
 
 struct WeatherElement: Codable {
     let id: Int
-    let main, description, icon: String
-
-    
+    let main: String
+    let description: String
+    let icon: String
     
     static func emptyInit() -> WeatherElement {
         return WeatherElement(

@@ -9,20 +9,20 @@ import Foundation
 import CoreLocation
 import MapKit
 
-protocol MapViewModelDelegate: class {
-  func showWeather(place: String)
+protocol MapViewModelDelegate: AnyObject {
+    func showWeather(place: String)
 }
 
-
 final class MapViewModel {
+    weak var delegate: MapViewModelDelegate?
     
     var place: String?
     
+    var stringCoord: String?
     
     func showWeather() {
-      if let place = place {
-        //delegate?.showWeather(place: place)
-      }
+        if let place = place {
+            delegate?.showWeather(place: place)
+        }
     }
-
 }

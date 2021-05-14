@@ -39,7 +39,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
                 return
             }
             print(placemark)
-            let name = placemark.country ?? ""
+            let name = placemark.locality ?? ""
 
             completion(name)
         }
