@@ -29,6 +29,8 @@
 		77424E9F2649D5440044CD73 /* WeatherViewModelProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77424E9E2649D5440044CD73 /* WeatherViewModelProtocols.swift */; };
 		77424EA8264A066B0044CD73 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77424EA7264A066B0044CD73 /* MapViewController.swift */; };
 		7756DC4C264E3C4A0031C9D5 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7756DC4B264E3C4A0031C9D5 /* SearchResultsViewController.swift */; };
+		7756DC582650373A0031C9D5 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7756DC572650373A0031C9D5 /* Router.swift */; };
+		7756DC5D26504F2B0031C9D5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7756DC5C26504F2B0031C9D5 /* Alamofire */; };
 		775A0C23263F7A2C00D05151 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775A0C22263F7A2C00D05151 /* AppDelegate.swift */; };
 		775A0C25263F7A2C00D05151 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 775A0C24263F7A2C00D05151 /* SceneDelegate.swift */; };
 		775A0C2C263F7A2F00D05151 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 775A0C2B263F7A2F00D05151 /* Assets.xcassets */; };
@@ -60,6 +62,7 @@
 		77424E9E2649D5440044CD73 /* WeatherViewModelProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModelProtocols.swift; sourceTree = "<group>"; };
 		77424EA7264A066B0044CD73 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		7756DC4B264E3C4A0031C9D5 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
+		7756DC572650373A0031C9D5 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		775A0C1F263F7A2C00D05151 /* WeatherMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		775A0C22263F7A2C00D05151 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		775A0C24263F7A2C00D05151 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -75,6 +78,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				775A0C3C263F7DAB00D05151 /* SnapKit in Frameworks */,
+				7756DC5D26504F2B0031C9D5 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				77424E1F2646DFAC0044CD73 /* OpenWeatherMapAPI.swift */,
+				7756DC572650373A0031C9D5 /* Router.swift */,
 				77424E242646E0F20044CD73 /* ResponseError.swift */,
 			);
 			path = Network;
@@ -206,6 +211,7 @@
 			name = WeatherMap;
 			packageProductDependencies = (
 				775A0C3B263F7DAB00D05151 /* SnapKit */,
+				7756DC5C26504F2B0031C9D5 /* Alamofire */,
 			);
 			productName = WeatherMap;
 			productReference = 775A0C1F263F7A2C00D05151 /* WeatherMap.app */;
@@ -236,6 +242,7 @@
 			mainGroup = 775A0C16263F7A2C00D05151;
 			packageReferences = (
 				775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				7756DC5B26504F2B0031C9D5 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 775A0C20263F7A2C00D05151 /* Products */;
 			projectDirPath = "";
@@ -284,6 +291,7 @@
 				77424E4F264720B60044CD73 /* WeatherViewModel.swift in Sources */,
 				77424E312646E3BA0044CD73 /* CurrentWeather.swift in Sources */,
 				77424E932649BA8B0044CD73 /* CustomUIColor.swift in Sources */,
+				7756DC582650373A0031C9D5 /* Router.swift in Sources */,
 				77424E962649BBAB0044CD73 /* CustomUIFont.swift in Sources */,
 				77424EA8264A066B0044CD73 /* MapViewController.swift in Sources */,
 				77424E352646E43D0044CD73 /* Coordinate.swift in Sources */,
@@ -483,6 +491,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7756DC5B26504F2B0031C9D5 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.4.3;
+			};
+		};
 		775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -494,6 +510,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7756DC5C26504F2B0031C9D5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7756DC5B26504F2B0031C9D5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		775A0C3B263F7DAB00D05151 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 775A0C3A263F7DAB00D05151 /* XCRemoteSwiftPackageReference "SnapKit" */;

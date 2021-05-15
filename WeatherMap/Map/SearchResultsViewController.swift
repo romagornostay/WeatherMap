@@ -7,22 +7,20 @@
 
 import UIKit
 import CoreLocation
+import MapKit
 
 protocol SearchResultsViewControllerDelegate: AnyObject {
-    func searchResultsViewController(_ vc: SearchResultsViewController, didSelectLocationWith coordinates: CLLocationCoordinate2D?)
+    func searchResultsViewController(_ vc: SearchResultsViewController, didSelectLocationWith coordinate: CLLocationCoordinate2D?)
 }
 
 class SearchResultsViewController: UIViewController {
     
     weak var delegate: SearchResultsViewControllerDelegate?
     
-    var locations = [Location]()
-    
-    let tableView: UITableView = {
-        let table = UITableView()
-        table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        return table
-    }()
+    var searchCompleter = MKLocalSearchCompleter()
+    var searchResults = [MKLocalSearchCompletion]()
+        
+    let tableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +30,7 @@ class SearchResultsViewController: UIViewController {
         tableView.backgroundColor = UIColor(white: 0.1, alpha: 0.01)
         tableView.delegate = self
         tableView.dataSource = self
+        searchCompleter.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -39,48 +38,62 @@ class SearchResultsViewController: UIViewController {
         
         tableView.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height)
     }
-    
-    func updateSearchResults(text: String) {
-        LocationManager.shared.findLocations(with: text) { [weak self] locations in
-            DispatchQueue.main.async {
-                self?.locations = locations
-                self?.tableView.reloadData()
-            }
-        }
-    }
-}
-
-extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        locations.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = locations[indexPath.row].title
-        cell.textLabel?.numberOfLines = 0
-        return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        //show pin at selected place
-        let coordinate = locations[indexPath.row].coordinates?.coordinate
-        delegate?.searchResultsViewController(self, didSelectLocationWith: coordinate)
-        print("find place at selected coordinate \n\(coordinate!)\n")
-    }
 }
 
 extension SearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
-        LocationManager.shared.findLocations(with: text) { [weak self] locations in
-            DispatchQueue.main.async {
-                self?.locations = locations
-                self?.tableView.reloadData()
-                print(locations)
-                print("1.----\n\n\(String(describing: self?.locations))\n")
-            }
+        searchCompleter.queryFragment = text
+        
+    }
+}
+
+extension SearchResultsViewController: MKLocalSearchCompleterDelegate {
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        
+        searchResults = completer.results
+        
+        tableView.reloadData()
+    }
+    // This method is called when there was an error with the searchCompleter
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        // Error
+    }
+}
+
+extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSource{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        searchResults.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let result = searchResults[indexPath.row]
+        let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
+        cell.textLabel?.text = result.title
+        cell.detailTextLabel?.text = result.subtitle
+        return cell
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let result = searchResults[indexPath.row]
+        let searchRequest = MKLocalSearch.Request(completion: result)
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { (response, error) in
+            guard let coordinate = response?.mapItems[0].placemark.coordinate else { return }
+            guard let name = response?.mapItems[0].name else { return }
+            
+            self.delegate?.searchResultsViewController(self, didSelectLocationWith: coordinate)
+            let lat = coordinate.latitude
+            let lon = coordinate.longitude
+            
+            print(lat)
+            print(lon)
+            print(name)
+            
         }
     }
 }
+
+
 

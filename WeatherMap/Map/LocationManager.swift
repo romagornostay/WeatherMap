@@ -8,10 +8,6 @@
 import Foundation
 import CoreLocation
 
-struct Location {
-    let title: String
-    let coordinates: CLLocation?
-}
 
 class LocationManager: NSObject, CLLocationManagerDelegate {
     
@@ -23,8 +19,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     
     var completion: ((CLLocation) -> Void)?
     
-    var previousLocation: CLLocation?
-    
     public func getUserLocation(completion: @escaping ((CLLocation) -> Void)) {
         self.completion = completion
         manager.requestWhenInUseAuthorization()
@@ -33,43 +27,24 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     public func resolveLocationName(with location: CLLocation, completion: @escaping ((String?) -> Void)) {
-        geocoder.reverseGeocodeLocation(location, preferredLocale: .current) { (placemarks, error) in
-            guard let placemark = placemarks?.first, error == nil else {
-                completion(nil)
-                return
+        geocoder.reverseGeocodeLocation(location, preferredLocale: .current) { placemarks, error in
+            guard let placemark = placemarks?.first, error == nil else { return }
+            if let locality = placemark.locality {
+                DispatchQueue.main.async {
+                    completion(locality)
+                }
             }
-            print(placemark)
-            let name = placemark.locality ?? ""
-
-            completion(name)
         }
     }
-    public func findLocations(with query: String, completion: @escaping (([Location]) -> Void)) {
-        geocoder.geocodeAddressString(query) { places, error in
-            guard let places = places, error == nil else {
-                completion([])
-                return
+    
+    public func findLocations(with query: String, completion: @escaping ((CLLocation?) -> Void)) {
+        geocoder.geocodeAddressString(query) { placemarks, error in
+            guard let placemark = placemarks?.first, error == nil else { return }
+            if let location = placemark.location {
+                DispatchQueue.main.async {
+                    completion(location)
+                }
             }
-            let models: [Location] = places.compactMap { place in
-                var name = ""
-                if let locationName = place.name {
-                    name += locationName
-                }
-                if let adminRegion = place.administrativeArea {
-                    name += ", \(adminRegion)"
-                }
-//                if let locality = place.locality {
-//                    name += ", \(locality)"
-//                }
-                if let country = place.country {
-                    name += ", \(country)"
-                }
-                print("\n\(place)\n\n")
-                
-                let result = Location(title: name, coordinates: place.location)
-                return result
-            }
-            completion(models)
         }
     }
     

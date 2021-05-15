@@ -31,6 +31,7 @@ final class WeatherViewModel {
     
     func getData() {
         client.getCurrentWeather(name: place) { [weak self] (weather, error) in
+            DispatchQueue.main.async {
             guard let cw = self else { return }
             if let currentWeather = weather {
                 cw.currentWeather = currentWeather
@@ -40,8 +41,27 @@ final class WeatherViewModel {
                 cw.stateView = .failed
             }
         }
+        }
         print("\n1.---\n\(currentWeather)\n\n")
     }
+    
+    func get(){
+        client.getCurrentWeathe(place: place) { [weak self] (result: Result<CurrentWeather, NetworkError>) in
+            guard let cw = self else { return }
+            switch result {
+            case .success(let weather):
+                let currentWeather = weather
+                cw.currentWeather = currentWeather
+                cw.stateView = .success
+                
+            case .failure(let networkError):
+                _ = networkError
+                cw.stateView = .failed
+            }
+            
+          }
+    }
+    
     
     func sendData() -> CurrentWeather {
         let cw = self.currentWeather

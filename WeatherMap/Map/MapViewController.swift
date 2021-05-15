@@ -27,18 +27,37 @@ class MapViewController: UIViewController {
     let resultsVC = SearchResultsViewController()
     lazy var searchController = UISearchController(searchResultsController: resultsVC)
     
+    private func dafaultZoom(coordinate: CLLocationCoordinate2D){
+        let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        mapView.setRegion(region, animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //mapView.delegate = self
+        binding()
         setupNavigationItems()
         setupMapView()
         setupCard()
     }
     
+    private func binding() {
+        viewModel.setupCard = { [weak self] in
+            guard let self = self else { return }
+            guard let location = self.viewModel.location else { return }
+            self.addMapPin(location: location.coordinate)
+            self.showCard()
+        }
+        viewModel.hideCard = { [weak self] in
+            guard let self = self else { return }
+            self.hideCard()
+        }
+    }
+    
     private func setupNavigationItems() {
         title = "Global Weather"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "Map", style: .plain, target: self, action: nil)
-        
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.obscuresBackgroundDuringPresentation = false
@@ -55,20 +74,12 @@ class MapViewController: UIViewController {
         mapView.mapType = .standard
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         mapView.addGestureRecognizer(gestureRecognizer)
-        //      let latitude = CLLocationDegrees(50)
-        //      let longitude = CLLocationDegrees(10)
-        //      let coordinateRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: latitude, longitude: longitude),
-        //                                                latitudinalMeters: 2000000, longitudinalMeters: 2000000)
-        //      mapView.setRegion(coordinateRegion, animated: true)
-    }
-    @objc func handleTap(_ sender: UITapGestureRecognizer){
-        self.mapView.removeAnnotations(self.mapView.annotations)
-        if sender.state == .ended {
-            let locationInView = sender.location(in: mapView)
-            let locationOnMap = mapView.convert(locationInView, toCoordinateFrom: mapView)
-            addAnnotation(location: locationOnMap)
-            
-        }
+        
+        let latitude = CLLocationDegrees(45)
+        let longitude = CLLocationDegrees(10)
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        dafaultZoom(coordinate: coordinate)
+        
     }
     
     private func setupCard() {
@@ -88,28 +99,32 @@ class MapViewController: UIViewController {
         }
         card.closeTapped = { [weak self] in
             guard let self = self else { return }
-            self.hideView()
+            self.hideCard()
         }
     }
-    func addAnnotation(location: CLLocationCoordinate2D){
-        let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
-        let region = MKCoordinateRegion(center: location, span: span)
-        mapView.setRegion(region, animated: true)
-        let annotation = MKPointAnnotation()
-        
-        annotation.coordinate = location
-        mapView.addAnnotation(annotation)
-        let clLocation = CLLocation(latitude: location.latitude, longitude: location.longitude)
-        viewModel.stringCoord = clLocation.dms
-        LocationManager.shared.resolveLocationName(with: clLocation) { [weak self] locationName in
-            guard let locality = locationName else { return }
-            self?.viewModel.place = locality
-            !locality.isEmpty ? self?.showLocationView() : self?.hideView()
+    
+    @objc func handleTap(_ sender: UITapGestureRecognizer){
+        mapView.removeAnnotations(mapView.annotations)
+        viewModel.cleanCard()
+        if sender.state == .ended {
+            let locationInView = sender.location(in: mapView)
+            let location = mapView.convert(locationInView, toCoordinateFrom: mapView)
             
+            viewModel.findLocality(coordinate: location)
+            
+           // addMapPin(location: location)
         }
     }
-    private func showLocationView() {
-        if let place = viewModel.place, let coordinate = viewModel.stringCoord {
+    
+    func addMapPin(location: CLLocationCoordinate2D){
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        let pin = MKPointAnnotation()
+        pin.coordinate = location
+        mapView.addAnnotation(pin)
+    }
+    
+    private func showCard() {
+        if let place = viewModel.place, let coordinate = viewModel.coordinate {
             card.configCard(city: place, coordinate: coordinate)
             UIView.animate(withDuration: 0.2) {
                 self.card.snp.remakeConstraints { make in
@@ -123,8 +138,8 @@ class MapViewController: UIViewController {
         }
     }
     
-    private func hideView() {
-        UIView.animate(withDuration: 0.5) {
+    private func hideCard() {
+        UIView.animate(withDuration: 0.3) {
             self.card.snp.remakeConstraints { make in
                 make.width.equalTo(343)
                 make.height.equalTo(154)
@@ -137,16 +152,13 @@ class MapViewController: UIViewController {
 }
 
 extension MapViewController: SearchResultsViewControllerDelegate {
-    func searchResultsViewController(_ vc: SearchResultsViewController, didSelectLocationWith coordinates: CLLocationCoordinate2D?) {
-        guard let coordinates = coordinates else { return }
+    func searchResultsViewController(_ vc: SearchResultsViewController, didSelectLocationWith coordinate: CLLocationCoordinate2D?) {
+        guard let coordinate = coordinate else { return }
+        
+        viewModel.findLocality(coordinate: coordinate)
+        
         searchController.dismiss(animated: true) {
-            self.mapView.removeAnnotations(self.mapView.annotations)
-            let pin = MKPointAnnotation()
-            pin.coordinate = coordinates
-            self.mapView.addAnnotation(pin)
+            self.dafaultZoom(coordinate: coordinate)
         }
-        let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
-        let region = MKCoordinateRegion(center: coordinates, span: span)
-        mapView.setRegion(region, animated: true)
     }
 }
