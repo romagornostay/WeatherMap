@@ -9,44 +9,44 @@ import Foundation
 
 enum Router {
   
-  case getWeather(place: String, key: String), getIcon(code: String)
+  case forWeather(_ place: String, key: String), forIcon(_ code: String)
   
   var scheme: String {
     switch self {
-    case .getWeather, .getIcon: return "https"
+    case .forWeather, .forIcon: return "https"
     }
   }
   
   var host: String {
     switch self {
-    case .getWeather: return "api.openweathermap.org"
-    case .getIcon:    return "openweathermap.org"
+    case .forWeather: return "api.openweathermap.org"
+    case .forIcon:    return "openweathermap.org"
     }
   }
   
   var path: String {
     switch self {
-    case .getWeather:        return "/data/2.5/weather"
-    case .getIcon(let code): return "/img/wn/\(code)@2x.png"
+    case .forWeather:        return "/data/2.5/weather"
+    case .forIcon(let code): return "/img/wn/\(code)@2x.png"
     }
   }
   
   var method: String {
     switch self {
-    case .getWeather, .getIcon: return "GET"
+    case .forWeather, .forIcon: return "GET"
     }
   }
   
   var queryItems: [URLQueryItem] {
     switch self {
-    case .getWeather(let city, let key):
-      return [URLQueryItem(name: "q", value: city),URLQueryItem(name: "appid", value: key)]
-    case .getIcon:
+    case .forWeather(let city, let key):
+      return [URLQueryItem(name: "q", value: city), URLQueryItem(name: "appid", value: key)]
+    case .forIcon:
       return [URLQueryItem]()
     }
   }
   
-  func getURL() -> URL? {
+  func completed() -> URL? {
     var components = URLComponents()
     components.scheme = self.scheme
     components.host = self.host

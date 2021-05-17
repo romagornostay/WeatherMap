@@ -11,60 +11,33 @@ import UIKit
 final class WeatherViewModel {
     
     private let client = OpenWeatherMapAPI()
-    
     var stateView = StateView.loading
-    
+    var updateView: (() -> ())?
     var currentWeather = CurrentWeather.emptyInit()
-    
+    var responseError: ResponseError?
     private let place: String
     
     init(place: String) {
         self.place = place
     }
-     
     
     func retry() {
         stateView = .loading
-        
         getData()
     }
     
     func getData() {
-        client.getCurrentWeather(name: place) { [weak self] (weather, error) in
-            DispatchQueue.main.async {
-            guard let cw = self else { return }
-            if let currentWeather = weather {
-                cw.currentWeather = currentWeather
-                cw.stateView = .success
-                print("\n2.---\n\(currentWeather)\n\n")
-            } else {
-                cw.stateView = .failed
-            }
-        }
-        }
-        print("\n1.---\n\(currentWeather)\n\n")
-    }
-    
-    func get(){
-        client.getCurrentWeathe(place: place) { [weak self] (result: Result<CurrentWeather, NetworkError>) in
-            guard let cw = self else { return }
+        client.getCurrentWeather(for: place) { [weak self] (result: Result<CurrentWeather, ResponseError>) in
+            guard let self = self else { return }
             switch result {
             case .success(let weather):
-                let currentWeather = weather
-                cw.currentWeather = currentWeather
-                cw.stateView = .success
-                
-            case .failure(let networkError):
-                _ = networkError
-                cw.stateView = .failed
+                self.currentWeather = weather
+                self.stateView = .success
+                self.updateView?()
+            case .failure(let responseError):
+                self.responseError = responseError
+                self.stateView = .failed
             }
-            
-          }
-    }
-    
-    
-    func sendData() -> CurrentWeather {
-        let cw = self.currentWeather
-       return cw
+        }
     }
 }

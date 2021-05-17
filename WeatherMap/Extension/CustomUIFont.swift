@@ -10,8 +10,8 @@ import UIKit
 
 extension UIFont {
     //MARK: - Fonts
-    static let base1 = UIFont.systemFont(ofSize: 20)
-    static let base2 = UIFont.systemFont(ofSize: 15, weight: .bold)
+    static let base1 = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    static let base2 = UIFont.systemFont(ofSize: 15, weight: .regular)
     static let base3 = UIFont.systemFont(ofSize: 16)
     static let base4 = UIFont.systemFont(ofSize: 18)
     static let base5 = UIFont.systemFont(ofSize: 18, weight: .bold)

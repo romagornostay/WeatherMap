@@ -35,7 +35,6 @@ class MapViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //mapView.delegate = self
         binding()
         setupNavigationItems()
         setupMapView()
@@ -56,8 +55,8 @@ class MapViewController: UIViewController {
     }
     
     private func setupNavigationItems() {
-        title = "Global Weather"
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Map", style: .plain, target: self, action: nil)
+        title = LocalizationConstants.Map.title
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: LocalizationConstants.Map.backItem, style: .plain, target: self, action: nil)
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.obscuresBackgroundDuringPresentation = false
@@ -75,8 +74,8 @@ class MapViewController: UIViewController {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         mapView.addGestureRecognizer(gestureRecognizer)
         
-        let latitude = CLLocationDegrees(45)
-        let longitude = CLLocationDegrees(10)
+        let latitude = CLLocationDegrees(LocalizationConstants.Location.latitude)
+        let longitude = CLLocationDegrees(LocalizationConstants.Location.longitude)
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         dafaultZoom(coordinate: coordinate)
         
@@ -85,12 +84,11 @@ class MapViewController: UIViewController {
     private func setupCard() {
         
         mapView.addSubview(card)
-        card.backgroundColor = .systemBackground
-        
+        card.backgroundColor = .white
         card.snp.makeConstraints { (make) in
-            make.width.equalTo(343)
             make.height.equalTo(154)
             make.left.equalTo(16)
+            make.right.equalTo(-16)
             make.bottom.equalTo(200)
         }
         card.buttonTapped = { [weak self] in
@@ -111,8 +109,6 @@ class MapViewController: UIViewController {
             let location = mapView.convert(locationInView, toCoordinateFrom: mapView)
             
             viewModel.findLocality(coordinate: location)
-            
-           // addMapPin(location: location)
         }
     }
     
@@ -128,10 +124,11 @@ class MapViewController: UIViewController {
             card.configCard(city: place, coordinate: coordinate)
             UIView.animate(withDuration: 0.2) {
                 self.card.snp.remakeConstraints { make in
-                    make.width.equalTo(343)
+                    //make.width.equalTo(343)
                     make.height.equalTo(154)
                     make.left.equalTo(16)
-                    make.bottom.equalTo(-16)
+                    make.right.equalTo(-16)
+                    make.bottomMargin.equalTo(-20)
                 }
                 self.view.layoutIfNeeded()
             }
@@ -141,9 +138,9 @@ class MapViewController: UIViewController {
     private func hideCard() {
         UIView.animate(withDuration: 0.3) {
             self.card.snp.remakeConstraints { make in
-                make.width.equalTo(343)
                 make.height.equalTo(154)
                 make.left.equalTo(16)
+                make.right.equalTo(-16)
                 make.bottom.equalTo(200)
             }
             self.view.layoutIfNeeded()

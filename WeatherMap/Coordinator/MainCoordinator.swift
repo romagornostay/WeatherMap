@@ -18,19 +18,19 @@ class MainCoordinator: Coordinator {
     func showMap() {
         let viewModel = MapViewModel()
         viewModel.delegate = self
-        let vc = MapViewController(viewModel: viewModel)
-        vc.navigationItem.largeTitleDisplayMode = .never
+        let mapViewController = MapViewController(viewModel: viewModel)
+        mapViewController.navigationItem.largeTitleDisplayMode = .never
         //vc.coordinator = self
-        navigationController.pushViewController(vc, animated: false)
+        navigationController.pushViewController(mapViewController, animated: false)
     }
 }
 
 extension MainCoordinator: MapViewModelDelegate {
     func showWeather(place: String) {
         let viewModel = WeatherViewModel(place: place)
-        let vc = WeatherViewController(viewModel: viewModel)
-        vc.navigationItem.largeTitleDisplayMode = .always
+        let weatherViewController = WeatherViewController(viewModel: viewModel)
+        weatherViewController.navigationItem.largeTitleDisplayMode = .always
         //vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        navigationController.pushViewController(weatherViewController, animated: true)
     }
 }

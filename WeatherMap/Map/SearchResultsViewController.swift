@@ -19,15 +19,13 @@ class SearchResultsViewController: UIViewController {
     
     var searchCompleter = MKLocalSearchCompleter()
     var searchResults = [MKLocalSearchCompletion]()
-        
     let tableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = UIColor(white: 1, alpha: 0.01)
+        view.backgroundColor = .base6
         view.addSubview(tableView)
-        tableView.backgroundColor = UIColor(white: 0.1, alpha: 0.01)
+        tableView.backgroundColor = .base6
         tableView.delegate = self
         tableView.dataSource = self
         searchCompleter.delegate = self
@@ -44,7 +42,6 @@ extension SearchResultsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         searchCompleter.queryFragment = text
-        
     }
 }
 
@@ -52,12 +49,10 @@ extension SearchResultsViewController: MKLocalSearchCompleterDelegate {
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         
         searchResults = completer.results
-        
         tableView.reloadData()
     }
-    // This method is called when there was an error with the searchCompleter
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        // Error
+        
     }
 }
 
@@ -71,6 +66,7 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         cell.textLabel?.text = result.title
         cell.detailTextLabel?.text = result.subtitle
+        cell.backgroundColor = .secondarySystemFill
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -90,7 +86,6 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
             print(lat)
             print(lon)
             print(name)
-            
         }
     }
 }

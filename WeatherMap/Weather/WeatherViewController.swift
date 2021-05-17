@@ -23,188 +23,90 @@ final class WeatherViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    let contentView: UIView = {
-        let view = UIView()
-        return view
-    }()
     
-    let temperatureLabel: UILabel = {
+    private let icon = WeatherIcon()
+    private let humidity = WeatherDetail()
+    private let windView = WeatherDetail()
+    private let pressure = WeatherDetail()
+    private let imageView = UIImageView()
+    
+    private let temperatureLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .base4
+        label.textColor = .base5
         label.font = .base7
-        label.numberOfLines = 1
         return label
     }()
     
-    let humidityTitleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base6
-        label.numberOfLines = 1
-        return label
+    lazy var mainStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [temperatureLabel, icon, humidity, windView, pressure])
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 10
+        return stackView
     }()
-    
-    let humidityLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base5
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    let windTitleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base6
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    let windLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base5
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    let pressureTitleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base6
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    let pressureLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base5
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    let frameView: UIView = {
-        let view = UIView()
-        //view.backgroundColor = .systemBackground
-        return view
-    }()
-    
-    let descriptionTitleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .base4
-        label.font = .base6
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    private  let imageView = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         viewModel.getData()
         setup()
+        binding()
+        setupLayout()
         setupViews()
         
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        setupData()
-        setupLayout()
+    private func binding() {
+        viewModel.updateView = { [weak self] in
+            guard let self = self else { return }
+            let data = self.viewModel.currentWeather
+            self.setupData(currentWeather: data)
+            
+            guard let error = self.viewModel.responseError else { return }
+            self.showError(networkError: error) { [weak self] in
+                self?.viewModel.retry()
+            }
+        }
     }
     
     func setup() {
-        view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
-    func setupData() {
-        let cw = viewModel.sendData()
-        let description = cw.elements.first?.description
-        title = cw.name
+    func setupData(currentWeather: CurrentWeather) {
+        let currentWeather = currentWeather
+        let mainValue = currentWeather.mainValue
+        let iconData = currentWeather.elements.first
+        let wind = currentWeather.wind
+        title = currentWeather.name
         
-        temperatureLabel.text = "\(Int(cw.mainValue.temp - 273.15))˚"
-        descriptionTitleLabel.text = description?.capitalized
-        humidityTitleLabel.text = "humidity".uppercased()
-        humidityLabel.text = "\(cw.mainValue.humidity) %"
-        windTitleLabel.text = "wind".uppercased()
-        windLabel.text = "\(Wind.getDeg(deg:cw.wind.deg)) \(cw.wind.speed) m/s"
-        pressureTitleLabel.text = "pressure".uppercased()
-        pressureLabel.text = "\(cw.mainValue.pressure) mm Hg"
+        temperatureLabel.text = "\(Temperature.conversionToC(mainValue.temp))˚"
+        icon.configIcon(image: iconData?.icon, title: iconData?.description.capitalized)
+        humidity.configure(title: LocalizationConstants.Weather.humidity, description: "\(mainValue.humidity) %")
+        windView.configure(title: LocalizationConstants.Weather.wind, description: "\(Wind.getDeg(deg:wind.deg)) \(wind.speed) \(LocalizationConstants.Weather.windMeasurement)")
+        pressure.configure(title: LocalizationConstants.Weather.pressure, description: "\(Pressure.mmHg(mainValue.pressure)) \(LocalizationConstants.Weather.pressureMeasurement)")
         
-        if let image = UIImage(named: description!) {
-          imageView.image = image
+        if let image = UIImage(named: iconData!.description) {
+            imageView.image = image
         } else {
-          imageView.image = UIImage(named: "scattered clouds")
+            imageView.image = UIImage(named: "scattered clouds")
         }
-        //imageView.image = UIImage(named: description!)
     }
     
     func setupLayout() {
-        view.addSubview(contentView)
-        contentView.addSubview(temperatureLabel)
-        contentView.addSubview(descriptionTitleLabel)
-        contentView.addSubview(humidityTitleLabel)
-        contentView.addSubview(humidityLabel)
-        contentView.addSubview(windTitleLabel)
-        contentView.addSubview(windLabel)
-        contentView.addSubview(pressureTitleLabel)
-        contentView.addSubview(pressureLabel)
+        view.addSubview(mainStackView)
         
-        
-        
-        contentView.snp.makeConstraints { make in
-            make.edges.width.height.equalToSuperview()
-        }
-        temperatureLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView).offset(132)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        descriptionTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(temperatureLabel.snp.bottom).offset(10)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        humidityTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(descriptionTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        humidityLabel.snp.makeConstraints { make in
-            make.top.equalTo(humidityTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        windTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(humidityLabel.snp.bottom).offset(40)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        windLabel.snp.makeConstraints { make in
-            make.top.equalTo(windTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        pressureTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(windLabel.snp.bottom).offset(40)
-            make.leading.equalTo(contentView).inset(16)
-        }
-        
-        pressureLabel.snp.makeConstraints { make in
-            make.top.equalTo(pressureTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(contentView).inset(16)
+        mainStackView.snp.makeConstraints { (make) in
+            make.topMargin.left.equalTo(20)
+            make.bottom.equalTo(-5)
         }
         
     }
     
     func setupViews() {
         
-        view.addSubview(frameView)
-        frameView.addSubview(imageView)
+        view.addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
         let mask = CALayer()
         mask.contents = UIImage(named: "mask")?.cgImage
@@ -212,13 +114,17 @@ final class WeatherViewController: UIViewController {
         imageView.layer.mask = mask
         imageView.layer.masksToBounds = true
         
-        frameView.snp.makeConstraints { (make) in
-            make.width.height.equalTo(761)
-            make.top.equalTo(91)
-            make.left.equalTo(135)
-        }
         imageView.snp.makeConstraints { (make) in
-            make.left.top.equalTo(0)
+            make.right.bottom.equalToSuperview()
         }
+    }
+    
+    func showError(networkError: ResponseError, completion: @escaping () -> ()) {
+      let errorView = ErrorView(responseError: networkError)
+      errorView.refresh = { [weak errorView] in
+        errorView?.removeFromSuperview()
+        completion()
+      }
+      view.addSubview(errorView)
     }
 }

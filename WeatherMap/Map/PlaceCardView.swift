@@ -41,7 +41,6 @@ final class PlaceCardView: UIView {
     }
     
     func setupLayer() {
-        
         layer.cornerRadius = 8
         layer.shadowColor = UIColor.base5.cgColor
         layer.shadowOpacity = 1
@@ -51,7 +50,6 @@ final class PlaceCardView: UIView {
     }
     
     func setupPlaceLabel() {
-        
         addSubview(placeLabel)
         placeLabel.font = .base1
         placeLabel.textColor = .base1
@@ -62,7 +60,6 @@ final class PlaceCardView: UIView {
     }
     
     func setupCoordinateLabel() {
-        
         addSubview(coordinateLabel)
         coordinateLabel.font = .base2
         coordinateLabel.textColor = .base2
@@ -74,25 +71,22 @@ final class PlaceCardView: UIView {
     }
     
     @objc func showWeather() {
-        print("Show Weather")
         buttonTapped?()
     }
     
     func setupShowWeatherButton() {
-        
         addSubview(showWeatherButton)
-        showWeatherButton.setTitle("Show Weather", for: .normal)
+        showWeatherButton.setTitle(LocalizationConstants.Map.showWeather, for: .normal)
         showWeatherButton.setTitleColor(.base3, for: .normal)
         showWeatherButton.layer.cornerRadius = 22
-        showWeatherButton.layer.borderWidth = 1
         showWeatherButton.layer.borderColor = UIColor.base3.cgColor
+        showWeatherButton.layer.borderWidth = 1
         showWeatherButton.addTarget(self, action: #selector(showWeather), for: .touchUpInside)
         
         showWeatherButton.snp.makeConstraints { make in
-            make.width.equalTo(311)
             make.height.equalTo(44)
             make.left.equalTo(16)
-            make.bottom.equalTo(-13)
+            make.bottom.right.equalTo(-16)
         }
     }
     
@@ -101,7 +95,6 @@ final class PlaceCardView: UIView {
     }
     
     func setupCloseCardViewButton() {
-        
         addSubview(closeButton)
         closeButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         closeButton.addTarget(self, action: #selector(closeView), for: .touchUpInside)

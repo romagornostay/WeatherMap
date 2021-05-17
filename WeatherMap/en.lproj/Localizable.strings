@@ -1,0 +1,29 @@
+/* 
+  Localizable.strings
+  WeatherMap
+
+  Created by SalemMacPro on 16.5.21.
+  
+*/
+
+
+"MAP.TITLE" = "Global Weather";
+"MAP.BACK.ITEM" = "Map";
+"MAP.CARD.BUTTON" = "Show Weather";
+
+"KEY.ERROR.TITLE" = "Key error";
+"KEY.ERROR.DESCRIPTION" = "Try to pass correct key.";
+
+"NO.INTERNET.TITLE" = "No internet";
+"NO.INTERNET.DESCRIPTION" = "Try refreshing the screen when communication is restored.";
+
+"SOMETHING.WENT.WRONG.TITLE" = "Something went wrong";
+"SOMETHING.WENT.WRONG.DESCRIPTION" = "The problem is on our side, we are already looking into it. Please try refreshing the screen later.";
+
+"REFRESH.BUTTON" = "Refresh";
+
+"HUMIDITY" = "HUMIDITY";
+"WIND" = "WIND";
+"WIND.MEASUREMENT" = "m/s";
+"PRESSURE" = "PRESSURE";
+"PRESSURE.MEASUREMENT" = "mm Hg";

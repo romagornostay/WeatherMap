@@ -17,13 +17,9 @@ final class MapViewModel {
     weak var delegate: MapViewModelDelegate?
     
     var place: String?
-    
     var coordinate: String?
-    
     var location: CLLocation?
-    
     var setupCard: (() -> Void)?
-    
     var hideCard: (() -> Void)?
     
     func showWeather() {
@@ -47,14 +43,12 @@ final class MapViewModel {
                 return
                 
             }
-            print("\n1.)FL:---\(locality)\n")
             self?.setLocationForCard(place: locality, coordinate: coordinate)
         }
     }
     
     private func setLocationForCard(place: String, coordinate: CLLocationCoordinate2D) {
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        print("\n2.)setLocCard:---\(place)\n")
 
         self.location = location
         self.place = place

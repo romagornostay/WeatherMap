@@ -12,11 +12,8 @@ import CoreLocation
 class LocationManager: NSObject, CLLocationManagerDelegate {
     
     static let shared = LocationManager()
-    
     let manager = CLLocationManager()
-    
     let geocoder = CLGeocoder()
-    
     var completion: ((CLLocation) -> Void)?
     
     public func getUserLocation(completion: @escaping ((CLLocation) -> Void)) {
