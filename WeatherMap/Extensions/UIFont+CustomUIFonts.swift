@@ -5,7 +5,6 @@
 //  Created by SalemMacPro on 11.5.21.
 //
 
-import Foundation
 import UIKit
 
 extension UIFont {
@@ -16,6 +15,6 @@ extension UIFont {
     static let base4 = UIFont.systemFont(ofSize: 18)
     static let base5 = UIFont.systemFont(ofSize: 18, weight: .bold)
     static let base6 = UIFont.systemFont(ofSize: 18, weight: .regular)
-    static let base7 = UIFont.systemFont(ofSize: 120, weight: .bold)
-    static let base8 = UIFont.systemFont(ofSize: 40)
+    static let base7 = UIFont.boldSystemFont(ofSize: 110)
+    static let base8 = UIFont.boldSystemFont(ofSize: 24)
 }

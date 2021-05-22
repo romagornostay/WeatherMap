@@ -9,8 +9,4 @@ import Foundation
 
 struct Clouds: Codable {
     let all: Int
-
-    static func emptyInit() -> Clouds {
-        return Clouds(all: 0)
-    }
 }

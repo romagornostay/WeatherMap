@@ -8,7 +8,7 @@
 import Foundation
 
 struct Temperature {
-  static func conversionToC(_ temperatureInK: Double) -> Int {
-    return Int(temperatureInK - 273.15)
+  static func celsius(_ temperatureInKelvin: Double) -> Int {
+    return Int(temperatureInKelvin - Constants.ZeroCelsius.inKelvin)
   }
 }

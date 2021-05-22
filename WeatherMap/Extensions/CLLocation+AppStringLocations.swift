@@ -5,14 +5,13 @@
 //  Created by SalemMacPro on 11.5.21.
 //
 
-import Foundation
 import CoreLocation
 
 extension BinaryFloatingPoint {
     var dms: (degrees: Int, minutes: Int, seconds: Int) {
         var seconds = Int(self * 3600)
-        let degrees = seconds / 3600
-        seconds = abs(seconds % 3600)
+        let degrees = seconds / Constants.Seconds.inOneGeographicDegree
+        seconds = abs(seconds % Constants.Seconds.inOneGeographicDegree)
         return (degrees, seconds / 60, seconds % 60)
     }
 }

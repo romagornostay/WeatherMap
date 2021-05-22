@@ -10,9 +10,12 @@ import SnapKit
 import MapKit
 
 class MapViewController: UIViewController {
-    
-    weak var coordinator: MainCoordinator?
-    private var viewModel: MapViewModel
+    private let viewModel: MapViewModel
+    private let loaderView = UIActivityIndicatorView(style: .medium)
+    private let mapView = MKMapView()
+    private let cardView = PlaceCardView()
+    private let resultsVC = SearchResultsViewController()
+    private lazy var searchController = UISearchController(searchResultsController: resultsVC)
     
     init(viewModel: MapViewModel) {
         self.viewModel = viewModel
@@ -22,40 +25,45 @@ class MapViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let mapView = MKMapView()
-    private let card = PlaceCardView()
-    let resultsVC = SearchResultsViewController()
-    lazy var searchController = UISearchController(searchResultsController: resultsVC)
-    
-    private func dafaultZoom(coordinate: CLLocationCoordinate2D){
-        let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
-        let region = MKCoordinateRegion(center: coordinate, span: span)
-        mapView.setRegion(region, animated: true)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         binding()
-        setupNavigationItems()
+        setupLayout()
         setupMapView()
         setupCard()
+        setupLoader()
     }
     
     private func binding() {
-        viewModel.setupCard = { [weak self] in
-            guard let self = self else { return }
-            guard let location = self.viewModel.location else { return }
-            self.addMapPin(location: location.coordinate)
-            self.showCard()
+        viewModel.onDidStartLoading = { [weak self] in
+            self?.loaderView.startAnimating()
         }
-        viewModel.hideCard = { [weak self] in
-            guard let self = self else { return }
-            self.hideCard()
+        viewModel.onDidSetupCard = { [weak self] in
+            guard let location = self?.viewModel.location else { return }
+            self?.addMapPin(location: location.coordinate)
+            self?.showCard()
+        }
+        viewModel.onDidHideCard = { [weak self] in
+            self?.hideCard()
+        }
+        viewModel.onDidEndLoading = { [weak self] in
+            self?.loaderView.stopAnimating()
         }
     }
     
-    private func setupNavigationItems() {
+    private func addMapPin(location: CLLocationCoordinate2D){
+        mapView.removeAnnotations(mapView.annotations)
+        let pin = MKPointAnnotation()
+        pin.coordinate = location
+        mapView.addAnnotation(pin)
+    }
+    
+    private func setupLayout() {
         title = LocalizationConstants.Map.title
+        navigationController?.navigationBar.layer.shadowColor = UIColor.black.cgColor
+        navigationController?.navigationBar.layer.shadowOpacity = 1
+        navigationController?.navigationBar.layer.shadowOffset = .zero
+        navigationController?.navigationBar.layer.shadowRadius = 10
         navigationItem.backBarButtonItem = UIBarButtonItem(title: LocalizationConstants.Map.backItem, style: .plain, target: self, action: nil)
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -67,35 +75,41 @@ class MapViewController: UIViewController {
     private func setupMapView() {
         view.addSubview(mapView)
         mapView.snp.makeConstraints { make in
-            make.left.top.equalTo(0)
-            make.right.bottom.equalTo(0)
+            make.edges.equalToSuperview()
         }
         mapView.mapType = .standard
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         mapView.addGestureRecognizer(gestureRecognizer)
-        
-        let latitude = CLLocationDegrees(LocalizationConstants.Location.latitude)
-        let longitude = CLLocationDegrees(LocalizationConstants.Location.longitude)
+        startFromEurope()
+    }
+    
+    private func startFromEurope() {
+        let latitude = CLLocationDegrees(Constants.Location.latitude)
+        let longitude = CLLocationDegrees(Constants.Location.longitude)
         let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-        dafaultZoom(coordinate: coordinate)
-        
+        defaultZoom(coordinate: coordinate)
+    }
+    
+    private func defaultZoom(coordinate: CLLocationCoordinate2D){
+        let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
+        let region = MKCoordinateRegion(center: coordinate, span: span)
+        mapView.setRegion(region, animated: true)
     }
     
     private func setupCard() {
-        
-        mapView.addSubview(card)
-        card.backgroundColor = .white
-        card.snp.makeConstraints { (make) in
+        mapView.addSubview(cardView)
+        cardView.backgroundColor = .white
+        cardView.snp.makeConstraints { (make) in
             make.height.equalTo(154)
-            make.left.equalTo(16)
-            make.right.equalTo(-16)
+            make.leading.equalTo(16)
+            make.trailing.equalTo(-16)
             make.bottom.equalTo(200)
         }
-        card.buttonTapped = { [weak self] in
+        cardView.buttonTapped = { [weak self] in
             guard let self = self else { return }
             self.viewModel.showWeather()
         }
-        card.closeTapped = { [weak self] in
+        cardView.closeTapped = { [weak self] in
             guard let self = self else { return }
             self.hideCard()
         }
@@ -107,28 +121,28 @@ class MapViewController: UIViewController {
         if sender.state == .ended {
             let locationInView = sender.location(in: mapView)
             let location = mapView.convert(locationInView, toCoordinateFrom: mapView)
-            
             viewModel.findLocality(coordinate: location)
+            mapView.setCenter(location, animated: true)
         }
     }
     
-    func addMapPin(location: CLLocationCoordinate2D){
-        self.mapView.removeAnnotations(self.mapView.annotations)
-        let pin = MKPointAnnotation()
-        pin.coordinate = location
-        mapView.addAnnotation(pin)
+    private func setupLoader() {
+        mapView.addSubview(loaderView)
+        mapView.bringSubviewToFront(loaderView)
+        loaderView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
     }
     
     private func showCard() {
         if let place = viewModel.place, let coordinate = viewModel.coordinate {
-            card.configCard(city: place, coordinate: coordinate)
+            cardView.configure(place, with: coordinate)
             UIView.animate(withDuration: 0.2) {
-                self.card.snp.remakeConstraints { make in
-                    //make.width.equalTo(343)
+                self.cardView.snp.remakeConstraints { make in
                     make.height.equalTo(154)
-                    make.left.equalTo(16)
-                    make.right.equalTo(-16)
-                    make.bottomMargin.equalTo(-20)
+                    make.leading.equalTo(16)
+                    make.trailing.equalTo(-16)
+                    make.bottomMargin.equalTo(-25)
                 }
                 self.view.layoutIfNeeded()
             }
@@ -137,25 +151,23 @@ class MapViewController: UIViewController {
     
     private func hideCard() {
         UIView.animate(withDuration: 0.3) {
-            self.card.snp.remakeConstraints { make in
+            self.cardView.snp.remakeConstraints { make in
                 make.height.equalTo(154)
-                make.left.equalTo(16)
-                make.right.equalTo(-16)
+                make.leading.equalTo(16)
+                make.trailing.equalTo(-16)
                 make.bottom.equalTo(200)
             }
             self.view.layoutIfNeeded()
         }
     }
 }
-
+// MARK: SearchResultsViewControllerDelegate
 extension MapViewController: SearchResultsViewControllerDelegate {
     func searchResultsViewController(_ vc: SearchResultsViewController, didSelectLocationWith coordinate: CLLocationCoordinate2D?) {
         guard let coordinate = coordinate else { return }
-        
         viewModel.findLocality(coordinate: coordinate)
-        
         searchController.dismiss(animated: true) {
-            self.dafaultZoom(coordinate: coordinate)
+            self.defaultZoom(coordinate: coordinate)
         }
     }
 }

@@ -12,13 +12,4 @@ struct WeatherElement: Codable {
     let main: String
     let description: String
     let icon: String
-    
-    static func emptyInit() -> WeatherElement {
-        return WeatherElement(
-            id: 0,
-            main: "",
-            description: "",
-            icon: ""
-        )
-    }
 }

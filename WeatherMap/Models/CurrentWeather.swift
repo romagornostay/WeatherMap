@@ -18,7 +18,7 @@ struct CurrentWeather: Codable {
     let wind: Wind
     let clouds: Clouds
     let date: Int
-    let sys: Sys
+    let sys: System
     let code: Int
     
     enum CodingKeys: String, CodingKey {
@@ -28,23 +28,5 @@ struct CurrentWeather: Codable {
         case mainValue = "main"
         case date = "dt"
         case code = "cod"
-    }
-    
-    static func emptyInit() -> CurrentWeather {
-        return CurrentWeather(
-            timezone: 0,
-            id: 0,
-            name: "",
-            coordinate: Coordinate.emptyInit(),
-            elements: [WeatherElement.emptyInit()],
-            base: "",
-            mainValue: MainValue.emptyInit(),
-            visibility: 0,
-            wind: Wind.emptyInit(),
-            clouds: Clouds.emptyInit(),
-            date: 0,
-            sys: Sys.emptyInit(),
-            code: 0
-        )
     }
 }

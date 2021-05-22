@@ -16,11 +16,6 @@ struct LocalizationConstants {
         static let showWeather = NSLocalizedString("MAP.CARD.BUTTON", comment: "")
     }
     
-    struct Location {
-        static let latitude = 45
-        static let longitude = 10
-    }
-    
     struct Weather {
         static let humidity = NSLocalizedString("HUMIDITY", comment: "")
         static let wind = NSLocalizedString("WIND", comment: "")

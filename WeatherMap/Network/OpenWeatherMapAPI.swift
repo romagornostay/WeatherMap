@@ -11,55 +11,58 @@ import Alamofire
 
 final class OpenWeatherMapAPI {
     
-    private let apiKey = "Tap_Here_APIKey"
+    private let apiKey = "d705032f30dea9ca692f37a198a0f1f5"//"Tap_Here_APIKey"
     private let decoder = JSONDecoder()
-    private let session: URLSession
     
-    init(configuration: URLSessionConfiguration) {
-        self.session = URLSession(configuration: configuration)
-    }
     
-    convenience init() {
-        self.init(configuration: .default)
-    }
-    
-    private func getBaseRequest<T: Codable>(router: Router, completion: @escaping (Result<T, ResponseError>) -> ()) {
+    private func getBaseRequest<T: Codable>(router: URLRouter, completion: @escaping (Result<T, ResponseError>) -> ()) {
         guard let url = router.completed() else {
-            completion(.failure(.keyError))
+            DispatchQueue.main.async {
+                completion(.failure(.keyError))
+            }
             return
         }
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = router.method
-
         
-        let task = session.dataTask(with: urlRequest) { data, response, error in
-            if let data = data {
-                guard let httpResponse = response as? HTTPURLResponse else {
+        
+        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            if let _ = error {
+                DispatchQueue.main.async {
                     completion(.failure(.noInternet))
-                    return
                 }
-                
-                if httpResponse.statusCode == 200 {
-                    do {
-                        let weather = try self.decoder.decode(T.self, from: data)
-                        DispatchQueue.main.async {
-                            completion(.success(weather))
-                        }
-                    } catch  {
-                        completion(.failure(.serverResponse))
-                    }
-                } else {
+            }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                DispatchQueue.main.async {
                     completion(.failure(.serverResponse))
                 }
-            } else  {
-                completion(.failure(.serverResponse))
+                return
+            }
+            
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(.failure(.serverResponse))
+                }
+                return
+            }
+            
+            do {
+                let weather = try self.decoder.decode(T.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(weather))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(.serverResponse))
+                }
             }
             
         }
         task.resume()
     }
     
-    func getCurrentWeather(for place: String, completion: @escaping (Result<CurrentWeather, ResponseError>) -> ()) {
+    func getCurrentWeather(for place: String, completion: @escaping (Result<CurrentWeather, ResponseError>) -> Void) {
         getBaseRequest(router: .forWeather(place, key: apiKey)) { (result: Result<CurrentWeather, ResponseError>) in
             completion(result)
         }

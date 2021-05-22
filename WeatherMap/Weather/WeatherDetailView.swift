@@ -1,5 +1,5 @@
 //
-//  WeatherDetail.swift
+//  WeatherDetailView.swift
 //  WeatherMap
 //
 //  Created by SalemMacPro on 16.5.21.
@@ -8,15 +8,13 @@
 import UIKit
 import SnapKit
 
-class WeatherDetail: UIView {
-    
+class WeatherDetailView: UIView {
     private let titleLabel: UILabel = {
         var label = UILabel()
         label.textColor = .base4
         label.font = .base6
         return label
     }()
-    
     private let infoLabel: UILabel = {
         var label = UILabel()
         label.textColor = .base4
@@ -41,12 +39,13 @@ class WeatherDetail: UIView {
     private func setup() {
         addSubview(titleLabel)
         addSubview(infoLabel)
-        
         titleLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+            
         }
         infoLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(10)
+            make.top.equalTo(titleLabel.snp.bottom).inset(-10)
             make.leading.equalTo(titleLabel)
         }
     }

@@ -1,5 +1,5 @@
 //
-//  Router.swift
+//  URLRouter.swift
 //  WeatherMap
 //
 //  Created by SalemMacPro on 16.5.21.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Router {
+enum URLRouter {
   
   case forWeather(_ place: String, key: String), forIcon(_ code: String)
   

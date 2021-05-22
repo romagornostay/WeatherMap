@@ -12,7 +12,7 @@
 "MAP.CARD.BUTTON" = "Show Weather";
 
 "KEY.ERROR.TITLE" = "Key error";
-"KEY.ERROR.DESCRIPTION" = "Try to pass correct key.";
+"KEY.ERROR.DESCRIPTION" = "This key created an invalid request. Please try again.";
 
 "NO.INTERNET.TITLE" = "No internet";
 "NO.INTERNET.DESCRIPTION" = "Try refreshing the screen when communication is restored.";

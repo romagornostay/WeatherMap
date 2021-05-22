@@ -18,15 +18,4 @@ struct MainValue: Codable {
         case tempMax = "temp_max"
         case pressure, humidity
     }
-    
-    static func emptyInit() -> MainValue {
-        return MainValue(
-            temp: 0.0,
-            feelsLike: 0.0,
-            tempMin: 0,
-            tempMax: 0,
-            pressure: 0,
-            humidity: 0
-        )
-    }
 }

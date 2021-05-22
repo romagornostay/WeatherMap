@@ -20,7 +20,6 @@ class MainCoordinator: Coordinator {
         viewModel.delegate = self
         let mapViewController = MapViewController(viewModel: viewModel)
         mapViewController.navigationItem.largeTitleDisplayMode = .never
-        //vc.coordinator = self
         navigationController.pushViewController(mapViewController, animated: false)
     }
 }
@@ -30,7 +29,6 @@ extension MainCoordinator: MapViewModelDelegate {
         let viewModel = WeatherViewModel(place: place)
         let weatherViewController = WeatherViewController(viewModel: viewModel)
         weatherViewController.navigationItem.largeTitleDisplayMode = .always
-        //vc.coordinator = self
         navigationController.pushViewController(weatherViewController, animated: true)
     }
 }
